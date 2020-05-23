@@ -3,14 +3,15 @@ import math
 import random
 
 pg.init()
+pg.mixer.init()
 width, height= 640, 480
 screen=pg.display.set_mode((width,height))
 
 acc=[0,0]
 arrows=[]
 accuracy=0
-bulvel=15
-badvel=3
+bulvel=10
+badvel=7
 
 badtimer=100
 badtimer1=0
@@ -31,6 +32,16 @@ healthbar=pg.image.load("resources/images/healthbar.png")
 health=pg.image.load("resources/images/health.png")
 gameover = pg.image.load("resources/images/gameover.png")
 youwin = pg.image.load("resources/images/youwin.png")
+
+hit=pg.mixer.Sound("resources/audio/explode.wav")
+enemy=pg.mixer.Sound("resources/audio/enemy.wav")
+shoot=pg.mixer.Sound("resources/audio/shoot.wav")
+hit.set_volume(0.05)
+enemy.set_volume(0.05)
+shoot.set_volume(0.05)
+pg.mixer.music.load("resources/audio/moonlight.wav")
+pg.mixer.music.play(-1,0.0)
+pg.mixer.music.set_volume(0.25)
 
 running = 1
 exitcode = 0
@@ -85,6 +96,7 @@ while running:
         badrect.left=badguy[0]
 
         if badrect.left<64:
+            hit.play()
             healthvalue-=random.randint(5,20)
             badguys.pop(idx)
         
@@ -94,6 +106,7 @@ while running:
             bullrect.left=bullet[1]
             bullrect.top=bullet[2]
             if badrect.colliderect(bullrect):
+                enemy.play()
                 acc[0]+=1
                 badguys.pop(idx)
                 arrows.pop(index1)
@@ -141,6 +154,7 @@ while running:
                 keys[3]=False
         
         if event.type==pg.MOUSEBUTTONDOWN:
+            shoot.play()
             position=pg.mouse.get_pos()
             acc[1]+=1
             arrows.append([math.atan2(position[1]-(playerpos1[1]+32),position[0]-(playerpos1[0]+26)),playerpos1[0]+32,playerpos1[1]+32])
